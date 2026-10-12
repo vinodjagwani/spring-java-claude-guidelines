@@ -1,6 +1,6 @@
 # spring-java-claude-guidelines
 
-A drop-in `CLAUDE.md` that makes [Claude Code](https://claude.com/claude-code) behave like a careful senior engineer on **Java, Spring Boot, Gradle, and relational-database** projects: small focused diffs, tests for new logic, docs matched to your installed versions, Spring behavior checked against real Spring source, and a hard stop before anything touches production.
+A drop-in `CLAUDE.md` that makes [Claude Code](https://claude.com/claude-code) behave like a careful senior engineer on **Java, Spring Boot, Gradle or Maven, and relational-database** projects: small focused diffs, tests for new logic, docs matched to your installed versions, Spring behavior checked against real Spring source, and a hard stop before anything touches production.
 
 > **These are generic guidelines.** They are a starting point, not a standard. Adjust `CLAUDE.md` to your own requirements: your team's conventions, framework and Java versions, test strategy, and risk tolerance. Remove rules that do not apply, tighten the ones that do, and keep your repository-specific rules in the repository.
 
@@ -24,7 +24,7 @@ If your repo already has a `CLAUDE.md`, merge by hand. The file says repository 
 | Verification | New non-trivial logic gets a test. Bug fixes get a regression test. Nothing is reported as verified unless it ran. |
 | Docs and source | Check official docs for the **installed** versions before API, config, or version-sensitive choices. Use the `spring-source` MCP server for Spring behavior when it is connected. Say so when a lookup was not possible. |
 | Production safety | Never run builds, tests, migrations, or scripts against production. Stops and names the target, even when told "go ahead". |
-| Structure and immutability | Methods read top-down, with each step in a private single-responsibility helper. Requests, responses, and other objects are built in creation helpers, in tests too. `final` and immutable types by default; mutable only when a real limitation requires it. |
+| Structure and immutability | Public methods are orchestrators: all work lives in private single-responsibility helpers. Style rules are defaults for new or changed code only; the repo's own style wins. Requests, responses, and other objects are built in creation helpers, in tests too. `final` and immutable types by default; mutable only when a real limitation requires it. |
 | Java and Spring | `BigDecimal` for money, `Instant`/`LocalDate`/`Clock` for time, constructor injection, validated trust boundaries, authorization per resource. |
 | JPA and SQL | Transactions around one unit of work, DB constraints over pre-checks, no N+1, parameterized SQL, migrations through your tool. |
 | Reporting | One short report: what changed, references consulted, checks run, and what was skipped or risky. |
@@ -123,7 +123,7 @@ The rules were exercised with small Claude subagent runs on a toy Gradle project
 
 - **Guidance, not enforcement.** A model can still skip a rule, especially on large or messy tasks. For production safety, keep read-only credentials in development, require code review, and let CI be the gate.
 - **Lookups need tools.** The "consult official docs" rule works only if a web, fetch, or docs tool is available, and the Spring source rule works only after you set up the MCP server.
-- **Opinionated defaults.** It assumes Java 25, Spring Boot 4.x, and Gradle Kotlin DSL as the intended family but never overrides your declared versions. Treat them as defaults to adjust.
+- **Opinionated defaults.** It assumes Java 25, Spring Boot 4.x, and Gradle (Kotlin DSL) or Maven as the intended family but never overrides your declared versions. Treat them as defaults to adjust.
 - **Untested areas.** The Spring, JPA, SonarQube, and migration rules have had less hands-on testing than the scope, docs, and production-safety rules.
 
 ## Credits
